@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVCProject.Data;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace MVCProject.Controllers
 {
@@ -19,6 +20,26 @@ namespace MVCProject.Controllers
             IEnumerable<Student> allStudent = _db.Students;
             return View(allStudent);
         }
+
+        [HttpGet]
+        public IActionResult Index(string searchString)
+        {
+            var students = GetStudents();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.Name.Contains(searchString)).ToList();
+            }
+
+            ViewBag.SearchString = searchString;
+            return View(students);
+        }
+
+        public List<Student> GetStudents()
+        {
+            return _db.Students.ToList();
+        }
+
 
         public IActionResult Create()
         {
